@@ -4,6 +4,7 @@ from telegram.ext import Application, MessageHandler, filters, ContextTypes
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import CallbackQueryHandler
 import os
 from dotenv import load_dotenv
 import logging
@@ -44,7 +45,7 @@ inline_keyboard_markup = InlineKeyboardMarkup(inline_keyboard)
 
 # /start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("are")
+    await update.message.reply_text("you picked start command")
 
 
 # Handle text messages and display keyboards
@@ -64,7 +65,17 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("SALAM")
     
-    
+
+# Handle inline keyboard button presses
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+
+    await query.answer()
+
+    if query.data == "hello":
+        await query.message.reply_text("you pressed hello in inline keys")
+    elif query.data == "profile":
+        await query.message.reply_text("you pressed profile in inline keys")
 
 
 # Create the Telegram application
@@ -78,6 +89,9 @@ app.add_handler(CommandHandler("start", start))
 # Register handler for text messages
 app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
+
+# Register handler for inline keyboard button presses
+app.add_handler(CallbackQueryHandler(button_handler))
 
 
 # Start the bot
