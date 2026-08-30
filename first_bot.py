@@ -14,10 +14,12 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
+
 # bot token
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
+
 
 
 # Reply keyboard layout
@@ -43,9 +45,22 @@ inline_keyboard = [
 inline_keyboard_markup = InlineKeyboardMarkup(inline_keyboard)
 
 
+# Profile inline keyboard layout
+profile_keyboard = [
+    [
+        InlineKeyboardButton("Back", callback_data="back")
+    ]
+]
+
+# Create the profile inline keyboard
+profile_markup = InlineKeyboardMarkup(profile_keyboard)
+
+
+
 # /start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("you picked start command")
+
 
 
 # Handle text messages and display keyboards
@@ -66,6 +81,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("SALAM")
     
 
+
 # Handle inline keyboard button presses
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -75,23 +91,26 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data == "hello":
         await query.message.reply_text("you pressed hello in inline keys")
     elif query.data == "profile":
-        await query.message.reply_text("you pressed profile in inline keys")
+         await query.edit_message_text("Your profile",reply_markup=profile_markup)
+    elif query.data == "back":
+        await query.edit_message_text("Choose something:",reply_markup=inline_keyboard_markup)
+
 
 
 # Create the Telegram application
 app = Application.builder().token(TOKEN).build()
 
 
+
 # Register /start command
 app.add_handler(CommandHandler("start", start))
-
 
 # Register handler for text messages
 app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
-
 # Register handler for inline keyboard button presses
 app.add_handler(CallbackQueryHandler(button_handler))
+
 
 
 # Start the bot
