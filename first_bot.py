@@ -58,8 +58,12 @@ profile_markup = InlineKeyboardMarkup(profile_keyboard)
 
 
 # /start command handler
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("you picked start command")
+
+# Handle commands that don't have their own dedicated CommandHandler
+async def unknown_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("I don't know that command.")
 
 
 
@@ -88,7 +92,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # Handle inline keyboard button presses
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def inline_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
 
     await query.answer()
@@ -108,7 +112,12 @@ app = Application.builder().token(TOKEN).build()
 
 
 # Register /start command
-app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("start", start_command))
+
+# Register a handler for any command
+app.add_handler(MessageHandler(filters.COMMAND, unknown_command_handler))
+
+
 
 # Register handler for messages that are exactly "glass"
 app.add_handler(MessageHandler(filters.Regex("^glass$"), glass_handler))
@@ -120,7 +129,7 @@ app.add_handler(MessageHandler(filters.Regex("^normal$"), normal_handler))
 app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
 # Register handler for inline keyboard button presses
-app.add_handler(CallbackQueryHandler(button_handler))
+app.add_handler(CallbackQueryHandler(inline_button_handler))
 
 
 
