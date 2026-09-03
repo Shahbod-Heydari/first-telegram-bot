@@ -106,19 +106,26 @@ async def inline_button_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 
-# Handle photos
+# Handle messages that contain a photo
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("nice photo!")
 
+    # largest photo
+    largest_photo = update.message.photo[-1]
+
+    file_id = largest_photo.file_id
+
+    await update.message.reply_photo(photo=file_id)
 
 
-# Handle videos
+
+# Handle messages that contain a video
 async def video_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("cool video!")
 
 
 
-# Handle all documents
+# Handle messages that contain a document
 async def document_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("good document")
 
@@ -151,13 +158,13 @@ app.add_handler(CallbackQueryHandler(inline_button_handler))
 
 
 
-# Register handler for photos
+# Register handler for messages that contain a photo
 app.add_handler(MessageHandler(filters.PHOTO, photo_handler))
 
-# Register handler for videos
+# Register handler for messages that contain a video
 app.add_handler(MessageHandler(filters.VIDEO, video_handler))
 
-# Register handler for all types of documents
+# Register handler for messages that contain any type of document
 app.add_handler(MessageHandler(filters.Document.ALL, document_handler))
 
 
