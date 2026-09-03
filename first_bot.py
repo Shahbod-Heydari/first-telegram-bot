@@ -63,23 +63,28 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-# Handle text messages and display keyboards
-async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    if update.message.text == "glass":
-        await update.message.reply_text(
+# Handle "glass" messages by sending an inline keyboard
+async def glass_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
         "Choose something:",
         reply_markup=inline_keyboard_markup
-        )
+    )
 
-    elif update.message.text == "normal": 
-        await update.message.reply_text(
+
+
+# Handle "normal" messages by sending a reply keyboard
+async def normal_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
         "Choose something:",
         reply_markup=reply_markup_forkeys
-        )
-    else:
-        await update.message.reply_text("SALAM")
-    
+    )
+
+
+
+# Handle other text messages by replying with "SALAM"
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("SALAM")
+
 
 
 # Handle inline keyboard button presses
@@ -105,7 +110,13 @@ app = Application.builder().token(TOKEN).build()
 # Register /start command
 app.add_handler(CommandHandler("start", start))
 
-# Register handler for text messages
+# Register handler for messages that are exactly "glass"
+app.add_handler(MessageHandler(filters.Regex("^glass$"), glass_handler))
+
+# Register handler for messages that are exactly "normal"
+app.add_handler(MessageHandler(filters.Regex("^normal$"), normal_handler))
+
+# Register handler for other text messages
 app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
 # Register handler for inline keyboard button presses
