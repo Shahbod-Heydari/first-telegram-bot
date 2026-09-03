@@ -106,6 +106,24 @@ async def inline_button_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 
+# Handle photos
+async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("nice photo!")
+
+
+
+# Handle videos
+async def video_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("cool video!")
+
+
+
+# Handle all documents
+async def document_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("good document")
+
+
+
 # Create the Telegram application
 app = Application.builder().token(TOKEN).build()
 
@@ -130,6 +148,17 @@ app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
 # Register handler for inline keyboard button presses
 app.add_handler(CallbackQueryHandler(inline_button_handler))
+
+
+
+# Register handler for photos
+app.add_handler(MessageHandler(filters.PHOTO, photo_handler))
+
+# Register handler for videos
+app.add_handler(MessageHandler(filters.VIDEO, video_handler))
+
+# Register handler for all types of documents
+app.add_handler(MessageHandler(filters.Document.ALL, document_handler))
 
 
 
