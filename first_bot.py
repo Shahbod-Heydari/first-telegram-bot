@@ -91,18 +91,29 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-# Handle inline keyboard button presses
-async def inline_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# Handle the "hello" inline button press
+async def hello_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
 
     await query.answer()
 
-    if query.data == "hello":
-        await query.message.reply_text("you pressed hello in inline keys")
-    elif query.data == "profile":
-         await query.edit_message_text("Your profile",reply_markup=profile_markup)
-    elif query.data == "back":
-        await query.edit_message_text("Choose something:",reply_markup=inline_keyboard_markup)
+    await query.message.reply_text("you pressed hello in inline keys")
+
+# Handle the "profile" inline button press
+async def profile_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+
+    await query.answer()
+
+    await query.edit_message_text("you pressed profile in inline keys", reply_markup=profile_markup)
+
+# Handle the "back" inline button press
+async def back_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+
+    await query.answer()
+
+    await query.edit_message_text("choose something:", reply_markup=inline_keyboard_markup)
 
 
 
@@ -153,8 +164,16 @@ app.add_handler(MessageHandler(filters.Regex("^normal$"), normal_handler))
 # Register handler for other text messages
 app.add_handler(MessageHandler(filters.TEXT, message_handler))
 
-# Register handler for inline keyboard button presses
-app.add_handler(CallbackQueryHandler(inline_button_handler))
+
+
+# Register a handler for the "hello" inline button
+app.add_handler(CallbackQueryHandler(hello_button_handler, pattern = "^hello$"))
+
+# Register a handler for the "profile" inline button
+app.add_handler(CallbackQueryHandler(profile_button_handler, pattern = "^profile$"))
+
+# Register a handler for the "back" inline button
+app.add_handler(CallbackQueryHandler(back_button_handler, pattern = "^back$"))
 
 
 
